@@ -1,0 +1,1305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cynthia Nosiri — AI Safety Research Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c10;
+    --surface: #111318;
+    --surface2: #181c24;
+    --border: #1e2330;
+    --accent: #5ee7c8;
+    --accent2: #ff6b6b;
+    --accent3: #ffd166;
+    --text: #e8eaf0;
+    --text-dim: #7a8099;
+    --text-dimmer: #3d4258;
+    --grid: rgba(94,231,200,0.04);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* Grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Glow orbs */
+  .orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(120px);
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.12;
+  }
+  .orb-1 { width: 600px; height: 600px; background: var(--accent); top: -200px; right: -100px; }
+  .orb-2 { width: 400px; height: 400px; background: var(--accent2); bottom: 20%; left: -100px; }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 48px;
+    background: rgba(10,12,16,0.85);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-brand {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+    text-decoration: none;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--text-dim);
+    text-decoration: none;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--accent); }
+
+  /* ─── MAIN CONTENT ─── */
+  main {
+    position: relative;
+    z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 48px;
+  }
+
+  /* ─── HERO ─── */
+  #hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-top: 80px;
+  }
+
+  .hero-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.2s forwards;
+  }
+
+  .hero-label::before {
+    content: '//';
+    margin-right: 8px;
+    opacity: 0.5;
+  }
+
+  h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(48px, 7vw, 88px);
+    line-height: 1.0;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    margin-bottom: 8px;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.35s forwards;
+  }
+
+  h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .hero-sub {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: var(--text-dim);
+    letter-spacing: 0.04em;
+    margin-top: 20px;
+    margin-bottom: 40px;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.5s forwards;
+    max-width: 560px;
+  }
+
+  .hero-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 48px;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.65s forwards;
+  }
+
+  .tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    padding: 6px 14px;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    color: var(--text-dim);
+    letter-spacing: 0.06em;
+    background: var(--surface);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .tag:hover, .tag.active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(94,231,200,0.06);
+  }
+
+  .opportunity-banner {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin: 24px auto 0;
+    padding: 12px 22px;
+    border: 1px solid var(--accent);
+    border-radius: 4px;
+    background: rgba(94, 231, 200, 0.06);
+    color: var(--text-secondary);
+    font-size: 13px;
+    line-height: 1.5;
+    max-width: 620px;
+    text-align: left;
+  }
+  .opportunity-banner strong { color: var(--accent); }
+  .opp-dot {
+    width: 8px;
+    height: 8px;
+    min-width: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(1.3); }
+  }
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dimmer);
+    letter-spacing: 0.1em;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.8s forwards;
+  }
+
+  .hero-scroll::after {
+    content: '';
+    width: 40px;
+    height: 1px;
+    background: var(--text-dimmer);
+  }
+
+  /* ─── SECTION HEADERS ─── */
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 48px;
+    padding-top: 100px;
+  }
+
+  .section-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dimmer);
+    letter-spacing: 0.1em;
+  }
+
+  .section-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(28px, 4vw, 42px);
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+
+  .section-line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ─── RESEARCH CARDS ─── */
+  .research-grid {
+    display: grid;
+    gap: 2px;
+  }
+
+  .research-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 32px 36px;
+    cursor: pointer;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .research-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--accent);
+    transform: scaleY(0);
+    transition: transform 0.25s;
+    transform-origin: bottom;
+  }
+
+  .research-card:hover {
+    background: var(--surface2);
+    border-color: rgba(94,231,200,0.2);
+    transform: translateX(4px);
+  }
+
+  .research-card:hover::before { transform: scaleY(1); }
+
+  .card-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+
+  .card-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dimmer);
+    letter-spacing: 0.12em;
+  }
+
+  .card-area {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+    padding: 3px 8px;
+    border: 1px solid rgba(94,231,200,0.2);
+    border-radius: 2px;
+  }
+
+  .card-status {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--accent3);
+    letter-spacing: 0.08em;
+    padding: 3px 8px;
+    border: 1px solid rgba(255,209,102,0.2);
+    border-radius: 2px;
+    margin-left: auto;
+  }
+
+  .card-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px;
+    color: var(--text);
+    letter-spacing: -0.01em;
+    margin-bottom: 10px;
+    line-height: 1.3;
+  }
+
+  .card-desc {
+    font-size: 14px;
+    color: var(--text-dim);
+    line-height: 1.7;
+    margin-bottom: 20px;
+  }
+
+  .card-details {
+    display: none;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    animation: fadeUp 0.3s forwards;
+  }
+
+  .research-card.open .card-details { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px; }
+
+  .detail-block h4 {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dimmer);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .detail-block ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .detail-block li {
+    font-size: 13px;
+    color: var(--text-dim);
+    padding-left: 14px;
+    position: relative;
+  }
+
+  .detail-block li::before {
+    content: '›';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+  }
+
+  .finding {
+    font-size: 13px;
+    color: var(--text);
+    background: rgba(94,231,200,0.05);
+    border-left: 2px solid var(--accent);
+    padding: 10px 14px;
+    margin-bottom: 8px;
+    border-radius: 0 4px 4px 0;
+  }
+
+  .card-toggle {
+    position: absolute;
+    top: 32px; right: 36px;
+    font-family: 'DM Mono', monospace;
+    font-size: 18px;
+    color: var(--text-dimmer);
+    transition: all 0.2s;
+    line-height: 1;
+  }
+
+  .research-card.open .card-toggle {
+    color: var(--accent);
+    transform: rotate(45deg);
+  }
+
+  /* ─── SKILLS ─── */
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 2px;
+    margin-bottom: 48px;
+  }
+
+  .skill-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 28px 32px;
+    transition: all 0.2s;
+  }
+
+  .skill-block:hover {
+    background: var(--surface2);
+    border-color: rgba(94,231,200,0.15);
+  }
+
+  .skill-block h3 {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .skill-block h3::before {
+    content: '';
+    width: 20px;
+    height: 1px;
+    background: var(--accent);
+    opacity: 0.5;
+  }
+
+  .skill-items {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .skill-item {
+    font-size: 14px;
+    color: var(--text-dim);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .skill-item::before {
+    content: '';
+    width: 4px;
+    height: 4px;
+    background: var(--accent);
+    border-radius: 50%;
+    opacity: 0.5;
+    flex-shrink: 0;
+  }
+
+  /* ─── TOOLS ─── */
+  .tools-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 24px;
+  }
+
+  .tool-chip {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    padding: 8px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .tool-chip:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* ─── INTERESTS ─── */
+  .interests-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 2px;
+    margin-top: 8px;
+  }
+
+  .interest-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 20px 28px;
+    font-size: 14px;
+    color: var(--text-dim);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.2s;
+  }
+
+  .interest-item:hover {
+    background: var(--surface2);
+    color: var(--text);
+  }
+
+  .interest-item::before {
+    content: '⬡';
+    color: var(--accent);
+    font-size: 12px;
+    opacity: 0.6;
+  }
+
+  /* ─── ABOUT ─── */
+  .about-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 36px 40px;
+    margin-bottom: 2px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .about-block::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), transparent);
+  }
+
+  .about-text {
+    font-size: 16px;
+    color: var(--text-dim);
+    line-height: 1.85;
+    max-width: 780px;
+  }
+
+  .about-text strong { color: var(--text); font-weight: 600; }
+
+  .contact-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 28px;
+  }
+
+  .contact-link {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    padding: 8px 18px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    color: var(--text-dim);
+    text-decoration: none;
+    letter-spacing: 0.06em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+  }
+
+  .contact-link:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .contact-link .icon { font-size: 14px; }
+
+  /* ─── PUBLICATION BADGE ─── */
+  .pub-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    padding: 4px 10px;
+    border-radius: 2px;
+    letter-spacing: 0.06em;
+    margin-top: 10px;
+    margin-right: 6px;
+  }
+
+  .pub-badge.ieee {
+    background: rgba(94,231,200,0.08);
+    border: 1px solid rgba(94,231,200,0.3);
+    color: var(--accent);
+  }
+
+  .pub-badge.submitted {
+    background: rgba(255,209,102,0.07);
+    border: 1px solid rgba(255,209,102,0.25);
+    color: var(--accent3);
+  }
+
+  .pub-badge::before { content: '●'; font-size: 6px; }
+
+  /* ─── CONTRIBUTION LINE ─── */
+  .contribution {
+    margin-top: 14px;
+    padding: 10px 14px;
+    background: rgba(255,107,107,0.05);
+    border-left: 2px solid var(--accent2);
+    border-radius: 0 4px 4px 0;
+    font-size: 13px;
+    color: var(--text-dim);
+    font-style: italic;
+  }
+
+  .contribution strong { color: var(--accent2); font-style: normal; font-size: 10px; font-family: 'DM Mono', monospace; letter-spacing: 0.08em; display: block; margin-bottom: 4px; }
+
+  /* ─── PLACEHOLDER ─── */
+  .placeholder {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--accent3);
+    opacity: 0.6;
+    border: 1px dashed rgba(255,209,102,0.25);
+    padding: 6px 12px;
+    border-radius: 2px;
+    display: inline-block;
+    margin-top: 8px;
+  }
+
+  /* ─── FOOTER ─── */
+  footer {
+    position: relative;
+    z-index: 1;
+    margin-top: 100px;
+    border-top: 1px solid var(--border);
+    padding: 40px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1100px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .footer-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px;
+    color: var(--text-dim);
+  }
+
+  .footer-inst {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dimmer);
+    letter-spacing: 0.06em;
+    margin-top: 4px;
+  }
+
+  .footer-note {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dimmer);
+    letter-spacing: 0.06em;
+    text-align: right;
+  }
+
+  /* ─── EDIT OVERLAY ─── */
+  [contenteditable="true"] {
+    outline: none;
+    border-radius: 2px;
+    cursor: text;
+    transition: background 0.15s;
+  }
+
+  [contenteditable="true"]:hover {
+    background: rgba(94,231,200,0.06);
+    box-shadow: 0 0 0 1px rgba(94,231,200,0.2);
+  }
+
+  [contenteditable="true"]:focus {
+    background: rgba(94,231,200,0.08);
+    box-shadow: 0 0 0 2px rgba(94,231,200,0.3);
+  }
+
+  .edit-mode-banner {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 200;
+    background: var(--surface2);
+    border: 1px solid var(--accent);
+    padding: 12px 24px;
+    border-radius: 4px;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--accent);
+    letter-spacing: 0.06em;
+    display: none;
+    gap: 16px;
+    align-items: center;
+    backdrop-filter: blur(8px);
+  }
+
+  .edit-mode-banner.visible { display: flex; }
+
+  .edit-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    padding: 6px 14px;
+    background: var(--accent);
+    color: var(--bg);
+    border: none;
+    border-radius: 2px;
+    cursor: pointer;
+    letter-spacing: 0.06em;
+    transition: opacity 0.2s;
+    font-weight: 500;
+  }
+
+  .edit-btn:hover { opacity: 0.85; }
+
+  .edit-btn.secondary {
+    background: transparent;
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+  }
+
+  .edit-toggle {
+    position: fixed;
+    top: 50%;
+    right: 24px;
+    transform: translateY(-50%);
+    z-index: 200;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    padding: 8px 14px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    border-radius: 2px;
+    cursor: pointer;
+    letter-spacing: 0.06em;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    transition: all 0.2s;
+  }
+
+  .edit-toggle:hover, .edit-toggle.active {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* ─── ANIMATIONS ─── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .fade-in {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 768px) {
+    nav { padding: 16px 24px; }
+    .nav-links { display: none; }
+    main { padding: 0 24px; }
+    footer { padding: 32px 24px; flex-direction: column; gap: 16px; text-align: center; }
+    .edit-toggle { display: none; }
+    h1 { font-size: 40px; }
+    .research-card { padding: 24px 20px; }
+    .card-toggle { top: 24px; right: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-brand" href="#hero">CN — AI Safety</a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#research">Research</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#interests">Interests</a></li>
+    <li><a href="/cdn-cgi/l/email-protection#e4879d8a8b97d5a4898b9683858aca818091">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- EDIT TOGGLE -->
+<button class="edit-toggle" id="editToggle" onclick="toggleEditMode()">EDIT MODE</button>
+
+<!-- MAIN -->
+<main>
+
+  <!-- HERO -->
+  <section id="hero">
+    <p class="hero-label" contenteditable="false">AI Safety Research Portfolio</p>
+    <h1 contenteditable="false">Cynthia <em>Nosiri</em></h1>
+    <p class="hero-sub" contenteditable="false">
+      Doctoral Researcher — AI Safety, Fairness, and Evaluation<br>
+      Morgan State University · DEPA Lab
+    </p>
+    <div class="hero-tags">
+      <span class="tag">AI Safety Evaluation</span>
+      <span class="tag">Bias Detection</span>
+      <span class="tag">Human-AI Interaction</span>
+      <span class="tag">Fairness Across Dialects</span>
+      <span class="tag">LLM Alignment</span>
+    </div>
+    <div class="opportunity-banner">
+      <span class="opp-dot"></span>
+      <span><strong>Open to Opportunities</strong> — Actively seeking research internships, industry internships, and fellowships in AI Safety, Fairness, or Responsible AI at tech companies and academic labs. Available Summer 2026.</span>
+    </div>
+    <p class="hero-scroll">Scroll to explore</p>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="section-header fade-in">
+      <span class="section-num">00</span>
+      <h2 class="section-title">About</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="about-block fade-in">
+      <p class="about-text" contenteditable="false">
+        I am a <strong>doctoral researcher in AI Safety, Fairness, and Evaluation</strong> at Morgan State University's Data Engineering & Predictive Analytics (DEPA) Lab. My work sits at the intersection of language model safety, sociolinguistic fairness, and responsible AI deployment — with a particular focus on how large language models fail marginalized language communities. I design evaluation frameworks, safety benchmarks, and bias auditing pipelines that surface disparities invisible to standard accuracy metrics, with the goal of building AI systems that are safe and equitable for everyone.
+      </p>
+      <div class="contact-row">
+        <a class="contact-link" href="/cdn-cgi/l/email-protection#83e0faedecf0b2c3eeecf1e4e2edade6e7f6"><span class="icon">✉</span> <span class="__cf_email__" data-cfemail="8deef4e3e2febccde0e2ffeaece3a3e8e9f8">[email&#160;protected]</span></a>
+        <a class="contact-link" href="https://www.linkedin.com/in/cynthia-nosiri-88149513a/" target="_blank"><span class="icon">in</span> LinkedIn</a>
+        <a class="contact-link" href="https://depalab.github.io/depa-lab/" target="_blank"><span class="icon">◎</span> DEPA Lab ↗</a>
+        <a class="contact-link" href="cynthia_nosiri.pdf" download="Cynthia_Nosiri_CV.pdf"><span class="icon">↓</span> Download CV</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESEARCH -->
+  <section id="research">
+    <div class="section-header fade-in">
+      <span class="section-num">01</span>
+      <h2 class="section-title">Research Projects</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="research-grid">
+
+      <!-- Card 1 -->
+      <div class="research-card fade-in" onclick="toggleCard(this)">
+        <span class="card-toggle">+</span>
+        <div class="card-meta">
+          <span class="card-num">01</span>
+          <span class="card-area" contenteditable="false">LLM Safety Evaluation & Fairness</span>
+          <span class="card-status" contenteditable="false">First Author</span>
+        </div>
+        <h3 class="card-title" contenteditable="false">Refusing Fairness: Temporal Audit of Dialect Bias in Modern Language Models</h3>
+        <p class="card-desc" contenteditable="false">Multi-model evaluation of dialect bias in large language models by comparing responses to semantically equivalent AAVE and Standard American English prompts across five leading models.</p>
+        <div>
+          <span class="pub-badge ieee">📄 IEEE — Camera-Ready Submitted</span>
+          <span class="pub-badge ieee">🎤 Presenting at ICMI 2026</span>
+        </div>
+        <div class="contribution"><strong>Novel Contribution</strong>Introduces refusal behavior as a distinct, previously undocumented mechanism of dialect bias in safety-aligned LLMs — reframing safety filters as potential agents of linguistic discrimination.</div>
+        <div class="card-details">
+          <div class="detail-block">
+            <h4>Models Evaluated</h4>
+            <ul>
+              <li contenteditable="false">Claude 3.5 Sonnet</li>
+              <li contenteditable="false">GPT-4</li>
+              <li contenteditable="false">Gemini 1.5 Pro</li>
+              <li contenteditable="false">Qwen2</li>
+              <li contenteditable="false">LLaMA 3</li>
+            </ul>
+          </div>
+          <div class="detail-block">
+            <h4>Evaluation Metrics</h4>
+            <ul>
+              <li contenteditable="false">Sentiment polarity (DistilBERT, VADER, TextBlob)</li>
+              <li contenteditable="false">Lexical similarity (BLEU, ROUGE)</li>
+              <li contenteditable="false">Semantic similarity (BERTScore)</li>
+              <li contenteditable="false">Refusal behavior</li>
+            </ul>
+          </div>
+          <div class="detail-block">
+            <h4>Key Findings</h4>
+            <div class="finding" contenteditable="false">AAVE prompts generated more negative sentiment outputs across all models.</div>
+            <div class="finding" contenteditable="false">Claude refused 16.87% of AAVE prompts vs 11.91% of SAE prompts.</div>
+            <div class="finding" contenteditable="false">Safety filters disproportionately flagged dialectal language as unsafe.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="research-card fade-in" onclick="toggleCard(this)">
+        <span class="card-toggle">+</span>
+        <div class="card-meta">
+          <span class="card-num">02</span>
+          <span class="card-area" contenteditable="false">AI Safety Evaluation</span>
+          <span class="card-status" contenteditable="false">First Author</span>
+        </div>
+        <h3 class="card-title" contenteditable="false">Invisible Risks: Evaluating LLM Safety Disparities Across Dialects and Low-Resource Languages</h3>
+        <p class="card-desc" contenteditable="false">Introduced a structured, multi-model evaluation framework assessing the safety and helpfulness of LLMs across four language varieties. Native speakers contributed to prompt design; outputs were human-annotated across four rubric dimensions, revealing substantial disparities that standard English benchmarks miss entirely.</p>
+        <div>
+          <span class="pub-badge ieee">📄 IEEE — Camera-Ready Submitted</span>
+          <span class="pub-badge ieee">🎤 Presenting at ICMI 2026</span>
+        </div>
+        <div class="contribution"><strong>Novel Contribution</strong>First human-annotated, dialect-aware safety benchmark to evaluate AAVE, Nigerian Pidgin, and Nepali alongside SAE — demonstrating that safety alignment failures are global, sociolinguistically patterned, and invisible to standard English-only evaluations. Dataset, rubric, and pipeline released publicly.</div>
+        <div class="card-details">
+          <div class="detail-block">
+            <h4>Models Evaluated</h4>
+            <ul>
+              <li contenteditable="false">GPT-4o</li>
+              <li contenteditable="false">Claude 3.5</li>
+              <li contenteditable="false">Gemini 1.5</li>
+            </ul>
+          </div>
+          <div class="detail-block">
+            <h4>Dataset</h4>
+            <ul>
+              <li contenteditable="false">100 prompts × 4 languages × 3 models = 1,200 annotated responses</li>
+              <li contenteditable="false">5 safety-critical domains (Toxicity, Misinformation, Self-Harm, Illegal Activity, Jailbreak)</li>
+              <li contenteditable="false">GPT-4o generated prompts, manually reviewed by native speakers</li>
+              <li contenteditable="false">Hybrid AI + human translation into AAVE, Nigerian Pidgin, and Nepali</li>
+              <li contenteditable="false">20% dual-annotated for inter-annotator reliability (240 responses)</li>
+            </ul>
+          </div>
+          <div class="detail-block">
+            <h4>Annotation Rubric (4 Dimensions)</h4>
+            <ul>
+              <li contenteditable="false">Safety (0/1) — safe vs. unsafe output</li>
+              <li contenteditable="false">Helpfulness (0–2) — quality and ethical grounding</li>
+              <li contenteditable="false">Refusal Type (0–2) — hard refusal to no refusal</li>
+              <li contenteditable="false">Failure Type (0–2) — under-detection to over-flagging</li>
+            </ul>
+          </div>
+          <div class="detail-block">
+            <h4>Key Findings</h4>
+            <div class="finding" contenteditable="false">Overall safety rates: SAE 93.3% → AAVE 86.7% → Nigerian Pidgin 76.7% — statistically significant (χ² = 70.52, p &lt; 0.001).</div>
+            <div class="finding" contenteditable="false">AAVE under-detection rate (25%) was 4× higher than SAE (6.3%) — a critical safety failure mode.</div>
+            <div class="finding" contenteditable="false">AAVE helpfulness score: 1.39/2.0 vs. SAE 1.78/2.0 — models were both less safe and less helpful for dialect speakers.</div>
+            <div class="finding" contenteditable="false">Nigerian Pidgin showed bidirectional failure: highest under-detection (avg 18.7%) AND highest over-flagging (avg 6%).</div>
+            <div class="finding" contenteditable="false">Nepali's paradoxically high safety scores (95.3%) reflected linguistic exclusion — models refused due to incomprehension, not genuine alignment.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="research-card fade-in" onclick="toggleCard(this)">
+        <span class="card-toggle">+</span>
+        <div class="card-meta">
+          <span class="card-num">03</span>
+          <span class="card-area" contenteditable="false">AI Safety Models</span>
+          <span class="card-status" contenteditable="false">Under Revision</span>
+        </div>
+        <h3 class="card-title" contenteditable="false">SafeBERT: Measuring Bias Persistence and Fairness Disparities under Multi-LLM Synthetic Supervision</h3>
+        <p class="card-desc" contenteditable="false">Trained a compact MobileBERT bias detector entirely via multi-LLM ensemble distillation using Claude 3.5 Sonnet, GPT-4o, and Gemini 1.5 Pro — generating 21,327 synthetic examples across 8 bias categories. Despite 96.6% aggregate accuracy, fairness-stratified evaluation revealed severe demographic disparities, challenging the assumption that LLM consensus produces fair supervision.</p>
+        <div>
+          <span class="pub-badge submitted">⏳ Under Revision — Target: NeurIPS</span>
+        </div>
+        <div class="contribution"><strong>Novel Contribution</strong>First systematic fairness evaluation of a bias detector trained entirely on synthetic data — identifying three mechanisms through which bias propagates in LLM pipelines despite ensemble averaging: shared linguistic triggers across teacher models, circularity between demographic inference and bias detection, and conflation of demographic salience with bias expression. Establishes that synthetic consensus can re-encode and amplify representational biases rather than eliminating them.</div>
+        <div class="card-details">
+          <div class="detail-block">
+            <h4>Pipeline</h4>
+            <ul>
+              <li contenteditable="false">21,327 synthetic examples generated (Claude 3.5 Sonnet) — data generation is a core methodological component of this work</li>
+              <li contenteditable="false">8 bias categories: Gender, Racial, Age, Religious, Socioeconomic, Political, Cultural, No Bias</li>
+              <li contenteditable="false">Soft labels via ensemble averaging: GPT-4o + Claude 3.5 + Gemini 1.5 Pro</li>
+              <li contenteditable="false">Two-stage training: general (14,983 samples) → domain fine-tuning (3,905 samples)</li>
+              <li contenteditable="false">KL-divergence loss; MobileBERT architecture (4.3× smaller, 5.5× faster than BERT-base)</li>
+            </ul>
+          </div>
+          <div class="detail-block">
+            <h4>Aggregate Performance</h4>
+            <ul>
+              <li contenteditable="false">Accuracy: 96.6% · Macro F1: 0.959 · Weighted F1: 0.966</li>
+              <li contenteditable="false">Zero-shot on SBIC: F1 = 0.810 · on HateXplain: F1 = 0.700</li>
+              <li contenteditable="false">Soft-label training outperformed hard-label across all compact architectures</li>
+            </ul>
+          </div>
+          <div class="detail-block">
+            <h4>Fairness Disparities (All p &lt; 0.001)</h4>
+            <div class="finding" contenteditable="false">Religion: 83.3% false positive rate for Muslim individuals vs. 4.2% for Christians — FPR gap = 0.958 (χ² = 394.59).</div>
+            <div class="finding" contenteditable="false">Race: 80.0% FPR for Middle Eastern individuals vs. 3.5% for White individuals — FPR gap = 0.765.</div>
+            <div class="finding" contenteditable="false">100% of Muslim false positives involved neutral, legally protected religious accommodation statements — conflation of protected activity with bias expression.</div>
+            <div class="finding" contenteditable="false">Ensemble agreement reflected correlated error from shared training data, not independent reliable judgment — high inter-model agreement does not guarantee fairness.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 4 -->
+      <div class="research-card fade-in" onclick="toggleCard(this)">
+        <span class="card-toggle">+</span>
+        <div class="card-meta">
+          <span class="card-num">04</span>
+          <span class="card-area" contenteditable="false">Human-AI Interaction</span>
+          <span class="card-status" contenteditable="false">AISF Funded · Active</span>
+          <span class="card-status" contenteditable="false">Project Lead</span>
+        </div>
+        <h3 class="card-title" contenteditable="false">Evaluating AI-Assisted Cybersecurity Operations</h3>
+        <p class="card-desc" contenteditable="false">IRB-approved human-subject experiment measuring how access to frontier AI tools affects the speed, accuracy, and cognitive load of cybersecurity professionals across five realistic SOC analyst task environments. Funded by the AI Safety Fund (AISF); project period September 2025 – September 2026.</p>
+        <div class="contribution"><strong>Novel Contribution</strong>First controlled human-subjects study to compare AI-assisted vs. unassisted cybersecurity performance using NASA-TLX cognitive workload measurement alongside accuracy and speed metrics — producing empirical evidence on whether AI tools help or hinder human judgment in high-stakes security operations.</div>
+        <div class="card-details">
+          <div class="detail-block">
+            <h4>Task Environments (5 Domains)</h4>
+            <ul>
+              <li contenteditable="false">A1 — Phishing Email Triage</li>
+              <li contenteditable="false">A2 — Log Anomaly Spotting</li>
+              <li contenteditable="false">A3 — Vulnerability Deduplication & Prioritization</li>
+              <li contenteditable="false">A4 — Access Request Review</li>
+              <li contenteditable="false">A5 — Incident Ticket Drafting</li>
+            </ul>
+          </div>
+          <div class="detail-block">
+            <h4>Study Design</h4>
+            <ul>
+              <li contenteditable="false">Target: 30 qualified cybersecurity professionals (main study)</li>
+              <li contenteditable="false">Pilot: 5 participants (April 8–21, 2026)</li>
+              <li contenteditable="false">Main study: April 28 – May 12, 2026</li>
+              <li contenteditable="false">Participants complete 4 of 5 tasks under AI-assisted and non-AI conditions</li>
+              <li contenteditable="false">174 applicants screened; 7 qualified to date — recruitment active</li>
+              <li contenteditable="false">IRB approved December 17, 2025</li>
+            </ul>
+          </div>
+          <div class="detail-block">
+            <h4>Metrics</h4>
+            <ul>
+              <li contenteditable="false">Task accuracy (correct decisions per domain)</li>
+              <li contenteditable="false">Task completion time (primary speed metric)</li>
+              <li contenteditable="false">Cognitive workload — full 6-dimension NASA-TLX (Mental Demand, Physical Demand, Temporal Demand, Performance, Effort, Frustration)</li>
+            </ul>
+          </div>
+          <div class="detail-block">
+            <h4>Infrastructure</h4>
+            <ul>
+              <li contenteditable="false">Qualtrics delivery platform with randomized stimulus selection</li>
+              <li contenteditable="false">Automated session timing + proctor stopwatch backup</li>
+              <li contenteditable="false">CEAMLS & CAP Center partnership for professional recruitment</li>
+              <li contenteditable="false">Reporting & dissemination: July – September 2026</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 5 -->
+      <div class="research-card fade-in" onclick="toggleCard(this)">
+        <span class="card-toggle">+</span>
+        <div class="card-meta">
+          <span class="card-num">05</span>
+          <span class="card-area" contenteditable="false">Algorithmic Fairness · Affective Computing</span>
+          <span class="card-status" contenteditable="false">First Author</span>
+        </div>
+        <h3 class="card-title" contenteditable="false">Fairness Under Prosodic Variation: Auditing Speech Emotion Recognition for Neurodivergent-Like Speech Patterns</h3>
+        <p class="card-desc" contenteditable="false">First controlled audit of a commercial speech emotion recognition (SER) system using neurodivergent-informed prosodic augmentation. Isolated prosody as the causal bias mechanism by applying 7 clinically grounded augmentations to RAVDESS across normal and strong emotional intensity — revealing severe gendered and ableist failure patterns in the Valence AI Discrete SER system.</p>
+        <div>
+          <span class="pub-badge submitted">⏳ Submitted to ICML — Awaiting Feedback</span>
+          <span class="pub-badge ieee">🏆 Bias Bounty Competition — Monetary Prize (Intermediate Category)</span>
+        </div>
+        <div class="contribution"><strong>Novel Contribution</strong>First study to use controlled prosodic augmentation simulating autistic and ADHD vocal patterns to audit SER fairness — providing causal evidence (not just correlation) that prosodic variation alone triggers systematic, gendered bias in deployed emotion AI. Documents confidence miscalibration as a distinct harm mechanism that amplifies bias trust.</div>
+        <div class="card-details">
+          <div class="detail-block">
+            <h4>System & Dataset</h4>
+            <ul>
+              <li contenteditable="false">Model audited: Valence AI Discrete Emotion API (Nov–Dec 2025)</li>
+              <li contenteditable="false">Base corpus: RAVDESS — 8 actors (4M, 4F), 4 emotions, 2 intensity levels</li>
+              <li contenteditable="false">56 baseline recordings → 7 augmentations = 392 augmented samples</li>
+              <li contenteditable="false">Total: 448 recordings across 16 conditions</li>
+              <li contenteditable="false">Tools: Praat (Parselmouth), librosa, pyrubberband</li>
+            </ul>
+          </div>
+          <div class="detail-block">
+            <h4>Augmentation Types</h4>
+            <ul>
+              <li contenteditable="false">Autism-like: flat pitch (monotone), jitter (tremor ±0.3 ST), low RMS (quiet speech −23 LUFS)</li>
+              <li contenteditable="false">ADHD-like: fast (+15% tempo), slow (−25% tempo), irregular pausing (300ms silence)</li>
+              <li contenteditable="false">Baseline: environmental noise (25 dB SNR)</li>
+            </ul>
+          </div>
+          <div class="detail-block">
+            <h4>Key Findings — Overall</h4>
+            <div class="finding" contenteditable="false">Average accuracy dropped 40% from normal to strong intensity (26.8% → 16.1%) — falling below 33.3% chance-level baseline.</div>
+            <div class="finding" contenteditable="false">Fast (ADHD-like) speech at strong intensity: 4.17% accuracy with 54.3% confidence — the model was 13× overconfident, a severe miscalibration.</div>
+            <div class="finding" contenteditable="false">Confidence correlated with RMS energy (r = 0.46), not accuracy (r = −0.021) — the model trusts loud speech, not correct speech.</div>
+          </div>
+          <div class="detail-block">
+            <h4>Key Findings — Gender & Intersectional</h4>
+            <div class="finding" contenteditable="false">Female "angry" misattribution rate: 11.6% (normal) → 31.0% (strong); male accuracy collapsed 76% (25% → 6%). Disparate impact ratio: 4.40× — violates 0.8 threshold by 5.5×.</div>
+            <div class="finding" contenteditable="false">Under environmental noise at strong intensity: 66.7% of female speech labeled "angry" — highest hostile misattribution rate observed.</div>
+            <div class="finding" contenteditable="false">Autism-like prosody: female 27.8% accuracy vs. male 2.8% — 10× disparate impact (Cohen's h = 0.78, large effect).</div>
+            <div class="finding" contenteditable="false">Four conditions produced 0% male accuracy: fast speech, trembling voice, quiet speech, and flat pitch under strong intensity.</div>
+            <div class="finding" contenteditable="false">Male emotional erasure pattern: 67.9% anger→neutral, 57.1% happy→neutral, 50% sad→neutral mislabeled in confusion matrices.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 6 -->
+      <div class="research-card fade-in" onclick="toggleCard(this)">
+        <span class="card-toggle">+</span>
+        <div class="card-meta">
+          <span class="card-num">06</span>
+          <span class="card-area" contenteditable="false">Responsible AI Education</span>
+          <span class="card-status" contenteditable="false">First Author</span>
+        </div>
+        <h3 class="card-title" contenteditable="false">Participatory Design for Equity-Centered AI Curriculum Across HBCU–PWI Partnership</h3>
+        <p class="card-desc" contenteditable="false">Investigated how students and faculty co-articulate principles for equity-centered AI education through a cross-institutional HBCU–PWI partnership. Used participatory backwards-design to integrate justice-centered learning outcomes into AI curricula — addressing both content equity and the equity of the design process itself.</p>
+        <div>
+          <span class="pub-badge submitted">⏳ Submitted to IEEE — Awaiting Feedback</span>
+        </div>
+        <div class="contribution"><strong>Novel Contribution</strong>Provides an empirically grounded participatory backwards-design framework for AI curriculum development — one of few studies that embeds equity into both the content and the design process, with practical implications for CS and engineering programs seeking to institutionalize coalitional, justice-centered collaboration.</div>
+        <div class="card-details">
+          <div class="detail-block">
+            <h4>Methodology</h4>
+            <ul>
+              <li contenteditable="false">Full-day participatory design workshop</li>
+              <li contenteditable="false">Data: workshop artifacts, focus group notes, co-created institutional priorities and principles</li>
+              <li contenteditable="false">HBCU–PWI cross-institutional collaboration</li>
+              <li contenteditable="false">Participants: Human-Computer Interaction students and faculty (HURM)</li>
+            </ul>
+          </div>
+          <div class="detail-block">
+            <h4>Research Questions</h4>
+            <ul>
+              <li contenteditable="false">How do we establish a curriculum that addresses both student needs and institutional values?</li>
+              <li contenteditable="false">How can institutions collaborate ethically and in a coalitional spirit?</li>
+            </ul>
+          </div>
+          <div class="detail-block">
+            <h4>Key Findings</h4>
+            <div class="finding" contenteditable="false">Reimagining foundational assumptions and practices in how AI is taught.</div>
+            <div class="finding" contenteditable="false">Centering diverse voices and forms of expertise in curriculum design.</div>
+            <div class="finding" contenteditable="false">Balancing technical instruction with relationship-building across institutions.</div>
+            <div class="finding" contenteditable="false">Sustaining cross-institutional collaboration through transparency, shared governance, and iterative learning.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section id="skills">
+    <div class="section-header fade-in">
+      <span class="section-num">02</span>
+      <h2 class="section-title">Core Skills</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="skills-grid fade-in">
+      <div class="skill-block">
+        <h3>AI Safety & Alignment</h3>
+        <div class="skill-items">
+          <span class="skill-item" contenteditable="false">LLM evaluation frameworks</span>
+          <span class="skill-item" contenteditable="false">Bias detection systems</span>
+          <span class="skill-item" contenteditable="false">Safety benchmark design</span>
+        </div>
+      </div>
+      <div class="skill-block">
+        <h3>Machine Learning</h3>
+        <div class="skill-items">
+          <span class="skill-item" contenteditable="false">Knowledge distillation</span>
+          <span class="skill-item" contenteditable="false">Transformer models</span>
+          <span class="skill-item" contenteditable="false">PyTorch / HuggingFace</span>
+        </div>
+      </div>
+      <div class="skill-block">
+        <h3>Evaluation & Experimentation</h3>
+        <div class="skill-items">
+          <span class="skill-item" contenteditable="false">Human evaluation protocols</span>
+          <span class="skill-item" contenteditable="false">Dataset generation</span>
+          <span class="skill-item" contenteditable="false">Fairness auditing</span>
+        </div>
+      </div>
+      <div class="skill-block">
+        <h3>Responsible AI</h3>
+        <div class="skill-items">
+          <span class="skill-item" contenteditable="false">Participatory design</span>
+          <span class="skill-item" contenteditable="false">Sociolinguistic fairness</span>
+          <span class="skill-item" contenteditable="false">Human-AI collaboration research</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-header fade-in" style="padding-top: 48px;">
+      <span class="section-num"></span>
+      <h3 style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text-dimmer);letter-spacing:0.1em;text-transform:uppercase;">Selected Tools</h3>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="tools-row fade-in">
+      <span class="tool-chip" contenteditable="false">Python</span>
+      <span class="tool-chip" contenteditable="false">PyTorch</span>
+      <span class="tool-chip" contenteditable="false">HuggingFace</span>
+      <span class="tool-chip" contenteditable="false">LLM APIs</span>
+      <span class="tool-chip" contenteditable="false">Prompt Engineering</span>
+      <span class="tool-chip" contenteditable="false">Human Annotation Pipelines</span>
+      <span class="tool-chip" contenteditable="false">Statistical Evaluation</span>
+      <span class="tool-chip" contenteditable="false">AI Fairness Analysis</span>
+    </div>
+  </section>
+
+  <!-- INTERESTS -->
+  <section id="interests">
+    <div class="section-header fade-in" style="padding-top: 100px;">
+      <span class="section-num">03</span>
+      <h2 class="section-title">Research Interests</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="interests-list fade-in">
+      <div class="interest-item" contenteditable="false">LLM alignment and safety</div>
+      <div class="interest-item" contenteditable="false">Evaluation of generative AI systems</div>
+      <div class="interest-item" contenteditable="false">Fairness across dialects and cultures</div>
+      <div class="interest-item" contenteditable="false">Human-AI collaboration</div>
+      <div class="interest-item" contenteditable="false">Scalable safety benchmarks</div>
+    </div>
+  </section>
+
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <div class="footer-name" contenteditable="false">Cynthia Nosiri</div>
+    <div class="footer-inst" contenteditable="false">Morgan State University · DEPA Lab · AI Safety Research</div>
+  </div>
+  <div class="footer-note" contenteditable="false">
+    Doctoral Researcher<br>AI Safety, Fairness & Evaluation
+  </div>
+</footer>
+
+<!-- EDIT BANNER -->
+<div class="edit-mode-banner" id="editBanner">
+  <span>✎ Edit mode active — click any text to edit</span>
+  <button class="edit-btn secondary" onclick="toggleEditMode()">Done</button>
+</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  // ── Intersection Observer for fade-in ──
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+  // ── Card toggle ──
+  function toggleCard(card) {
+    if (card.getAttribute('contenteditable') === 'true') return;
+    card.classList.toggle('open');
+  }
+
+  // ── Edit mode ──
+  let editMode = false;
+
+  function toggleEditMode() {
+    editMode = !editMode;
+    const editable = document.querySelectorAll('[contenteditable]');
+    editable.forEach(el => {
+      el.contentEditable = editMode ? 'true' : 'false';
+    });
+
+    document.getElementById('editBanner').classList.toggle('visible', editMode);
+    document.getElementById('editToggle').classList.toggle('active', editMode);
+
+    document.querySelectorAll('.research-card').forEach(card => {
+      card.style.pointerEvents = editMode ? 'auto' : 'auto';
+    });
+  }
+</script>
+
+</body>
+</html>
